@@ -48,8 +48,13 @@ public class TestDataConfig {
         charlie.setName("Charlie");
         charlie.setRoles(Sets.newHashSet(analyst, tester));
 
+        personRepository.save(bob);
+        personRepository.save(charlie);
+        personRepository.save(alice);
+
         alice.setFriends(Sets.newHashSet(bob, charlie));
         charlie.setFriends(Sets.newHashSet(bob));
+        bob.setFriends(Sets.newHashSet(alice));
 
         personRepository.save(bob);
         personRepository.save(charlie);
