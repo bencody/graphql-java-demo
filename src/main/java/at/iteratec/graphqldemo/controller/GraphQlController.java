@@ -1,8 +1,6 @@
 package at.iteratec.graphqldemo.controller;
 
-import graphql.ExecutionResult;
-import graphql.GraphQL;
-import graphql.schema.GraphQLSchema;
+import at.iteratec.graphqldemo.service.GraphQlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +15,10 @@ import java.util.Map;
 public class GraphQlController {
 
     @Autowired
-    private GraphQLSchema graphQLSchema;
+    private GraphQlService service;
 
     @PostMapping("/graphql")
-    public Map<?, ?> executeQuery(@RequestBody String requestBody) {
-        GraphQL graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-        ExecutionResult execute = graphQL.execute(requestBody);
-        if (!execute.getErrors().isEmpty()) {
-            throw GraphQlException.create(execute.getErrors());
-        }
-        Map<?, ?> data = execute.getData();
-        return data;
+    public Map<?, ?> executeQuery(@RequestBody String query) {
+        return service.executeQuery(query);
     }
 }
