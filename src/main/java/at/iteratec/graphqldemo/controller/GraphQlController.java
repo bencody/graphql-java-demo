@@ -4,7 +4,9 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -17,12 +19,14 @@ public class GraphQlController {
     @Autowired
     private GraphQLSchema graphQLSchema;
 
-    @GetMapping("/")
-    public Map<?, ?> testEndpoint(@RequestParam String name) {
+    @PostMapping("/graphql")
+    public Map<?, ?> executeQuery(@RequestBody String requestBody) {
         GraphQL graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-        ExecutionResult execute = graphQL.execute("{ person(name: \"" + name + "\") {id, name, roles{name}, friends{id, name, roles{name}, friends{id, name, roles{name}}} } }");
+        ExecutionResult execute = graphQL.execute(requestBody);
+        if (!execute.getErrors().isEmpty()) {
+            throw GraphQlException.create(execute.getErrors());
+        }
         Map<?, ?> data = execute.getData();
-        System.out.println(data);
         return data;
     }
 }
